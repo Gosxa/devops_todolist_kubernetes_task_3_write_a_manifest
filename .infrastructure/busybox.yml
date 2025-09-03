@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox
+  labels:
+    app: busybox
+spec:
+  containers:
+    - name: busybox
+      image: ikulyk404/busyboxplus:curl
+      command: ["sleep", "3600"]
+      # контейнер будет "спать" час, чтобы не завершился сразу
+      # можно потом подключиться через kubectl exec и использовать curl
+  restartPolicy: Never

@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: todoapp
+  labels:
+    app: todoapp
+spec:
+  containers:
+    - name: todoapp
+      image: gosxa/todoapp:3.0.0
+      ports:
+        - containerPort: 8000
+      readinessProbe:
+        httpGet:
+          path: /ready
+          port: 8000
+        initialDelaySeconds: 5
+        periodSeconds: 10
+        timeoutSeconds: 2
+        failureThreshold: 3
+      livenessProbe:
+        httpGet:
+          path: /health
+          port: 8000
+        initialDelaySeconds: 15
+        periodSeconds: 20
+        timeoutSeconds: 2
+        failureThreshold: 3
+  restartPolicy: Always

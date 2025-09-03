@@ -4,9 +4,17 @@ from rest_framework import permissions, viewsets
 from api.serializers import TodoListSerializer, TodoSerializer, UserSerializer
 from lists.models import Todo, TodoList
 
+
+from flask import Flask, Response, send_file
 from django.http import HttpResponse
 from django.utils import timezone
 import time
+
+app = Flask(__name__)
+
+start_time = time.time()
+# Define the startup period (in seconds)
+startup_period = 10
 
 class IsCreatorOrReadOnly(permissions.BasePermission):
     """
@@ -56,3 +64,17 @@ class TodoViewSet(viewsets.ModelViewSet):
         user = self.request.user
         creator = user if user.is_authenticated else None
         serializer.save(creator=creator)
+
+@app.route('/health')
+def health_check():
+   return Response("Healthy", status=200)
+
+@app.route('/ready')
+def readiness_check():
+   # You can add logic here to determine if the app is ready. For simplicity, we'll just return 200.
+   if time.time() < start_time + startup_period:
+       # Application is not ready, return a non-200 status code
+       return Response("Not Ready", status=503)
+   else:
+       # Application is ready, return 200
+       return Response("Ready", status=200)
